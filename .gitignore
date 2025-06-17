@@ -1,4 +1,10 @@
+#Visual Studio
 .vs/
 *.user
 bin/
 obj/
+
+#Python
+venv/
+__pycache__/
+*.pyc
