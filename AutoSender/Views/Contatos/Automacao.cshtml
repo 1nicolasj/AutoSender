@@ -1,0 +1,58 @@
+@model IEnumerable<AutoSender.Models.Contato>
+
+@{
+    ViewData["Title"] = "Automação WhatsApp";
+}
+
+<div class="container mt-4">
+    <h2>Automação WhatsApp</h2>
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Envio Automático de Mensagens</h5>
+            <p class="card-text">
+                Esta funcionalidade permite enviar mensagens automaticamente para todos os contatos cadastrados.
+                Certifique-se de que:
+            </p>
+            <ul>
+                <li>O WhatsApp Web está logado em seu computador</li>
+                <li>Você tem uma conexão estável com a internet</li>
+                <li>Todos os contatos foram cadastrados corretamente</li>
+            </ul>
+
+            <form asp-action="ExecutarAutomacao" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Iniciar Automação
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-fecha os alerts após 5 segundos
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 5000);
+    </script>
+} 
