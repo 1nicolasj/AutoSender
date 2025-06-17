@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj": {}
+    "E:\\BNE\\AutoSender\\AutoSender\\AutoSender.csproj": {}
   },
   "projects": {
-    "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj": {
+    "E:\\BNE\\AutoSender\\AutoSender\\AutoSender.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj",
+        "projectUniqueName": "E:\\BNE\\AutoSender\\AutoSender\\AutoSender.csproj",
         "projectName": "AutoSender",
-        "projectPath": "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj",
-        "packagesPath": "C:\\Users\\nicolassantos\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\AutoSender\\AutoSender\\obj\\",
+        "projectPath": "E:\\BNE\\AutoSender\\AutoSender\\AutoSender.csproj",
+        "packagesPath": "C:\\Users\\kknicas\\.nuget\\packages\\",
+        "outputPath": "E:\\BNE\\AutoSender\\AutoSender\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\nicolassantos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kknicas\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -44,17 +45,21 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.11, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
@@ -62,7 +67,7 @@
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[8.0.0, )"
             }
           },
           "imports": [
@@ -84,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
