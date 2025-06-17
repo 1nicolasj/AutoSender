@@ -28,13 +28,9 @@ C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
-C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
-C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
-C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
-C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.NET.StringTools.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.VisualStudio.Web.CodeGeneration.dll
 C:\Dev\AutoSender\AutoSender\bin\Debug\net8.0\Microsoft.VisualStudio.Web.CodeGeneration.Core.dll
@@ -227,7 +223,6 @@ C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\staticwebassets.build.json
 C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\staticwebassets.development.json
 C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\AutoSender.csproj.Up2Date
 C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\AutoSender.dll
 C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\refint\AutoSender.dll
@@ -471,3 +466,4 @@ E:\BNE\AutoSender\AutoSender\obj\Debug\net8.0\refint\AutoSender.dll
 E:\BNE\AutoSender\AutoSender\obj\Debug\net8.0\AutoSender.pdb
 E:\BNE\AutoSender\AutoSender\obj\Debug\net8.0\AutoSender.genruntimeconfig.cache
 E:\BNE\AutoSender\AutoSender\obj\Debug\net8.0\ref\AutoSender.dll
+C:\Dev\AutoSender\AutoSender\obj\Debug\net8.0\AutoSender.sourcelink.json
