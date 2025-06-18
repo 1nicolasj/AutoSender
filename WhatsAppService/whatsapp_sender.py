@@ -167,59 +167,55 @@ class WhatsAppSender:
         return phone
 
     def send_message(self, phone, message):
-        """Envia mensagem SEM duplicação - CORREÇÃO PRINCIPAL"""
+        """Versão OTIMIZADA com Enter direto"""
         try:
             phone = self.format_phone(phone)
             print(f"Enviando para: {phone}")
             
-            # CORREÇÃO: URL direta com mensagem, mas SÓ clicar no botão
             message_encoded = urllib.parse.quote(message)
             url = f"https://web.whatsapp.com/send?phone={phone}&text={message_encoded}"
             self.driver.get(url)
             
-            wait = WebDriverWait(self.driver, 20)
+            wait = WebDriverWait(self.driver, 15)  # Reduzido de 20 para 15
             
-            # Aguardar página carregar
-            time.sleep(4)
+            # Aguardar página carregar (OTIMIZADO)
+            time.sleep(2)  # Reduzido de 4 para 2 segundos
             
-            # ESTRATÉGIA ÚNICA: Só clicar no botão de enviar
-            # A mensagem já está preenchida pela URL
+            # ESTRATÉGIA ÚNICA: Enter direto (mais rápido e confiável)
             try:
-                send_button = wait.until(EC.element_to_be_clickable((
-                    By.XPATH, '//span[@data-icon="send" or @data-testid="send"]'
+                message_box = wait.until(EC.element_to_be_clickable((
+                    By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]'
                 )))
-                send_button.click()
-                print("[OK] Enviado via botao")
-                time.sleep(3)
+                message_box.click()
+                time.sleep(0.5)  # Reduzido de 1 para 0.5 segundos
+                message_box.send_keys(Keys.ENTER)
+                print("[OK] Enviado via Enter")
+                time.sleep(2)  # Reduzido de 3 para 2 segundos
                 return True
                 
             except TimeoutException:
-                print("[AVISO] Botao nao encontrado - tentando Enter na caixa")
+                print("[AVISO] Campo de mensagem nao encontrado - tentando botao")
                 
-                # FALLBACK: Se não achou botão, apertar Enter no campo
-                # (SEM digitar novamente - só Enter)
+                # FALLBACK: Só se Enter falhar
                 try:
-                    message_box = wait.until(EC.element_to_be_clickable((
-                        By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]'
+                    send_button = wait.until(EC.element_to_be_clickable((
+                        By.XPATH, '//span[@data-icon="send" or @data-testid="send"]'
                     )))
-                    message_box.click()
-                    time.sleep(1)
-                    # NÃO digitar mensagem novamente - só apertar Enter
-                    message_box.send_keys(Keys.ENTER)
-                    print("[OK] Enviado via Enter")
-                    time.sleep(3)
+                    send_button.click()
+                    print("[OK] Enviado via botao (fallback)")
+                    time.sleep(2)
                     return True
                     
                 except TimeoutException:
                     print("[ERRO] Numero invalido ou WhatsApp nao carregou")
                     return False
-                        
+                    
         except WebDriverException as e:
             if "invalid session id" in str(e).lower():
                 print("[AVISO] Sessao perdida - reconectando...")
                 self.is_logged_in = False
                 if self.login_whatsapp():
-                    return self.send_message(phone, message)  # Retry
+                    return self.send_message(phone, message)
             print(f"[ERRO] Problema WebDriver: {e}")
             return False
             
@@ -270,8 +266,16 @@ class WhatsAppSender:
             
             # Intervalo entre mensagens
             if i < len(contacts):
-                print("Aguardando 8 segundos...")
-                time.sleep(8)
+                # Intervalo inteligente baseado no sucesso
+                if success_count == i:  # 100% de sucesso
+                    interval = 4  # Mais rápido
+                elif success_count > fail_count:  # Mais sucessos que falhas
+                    interval = 5  # Normal
+                else:  # Muitas falhas
+                    interval = 7  # Mais devagar para dar tempo
+            
+                print(f"Aguardando {interval}s...")
+                time.sleep(interval)
 
         # Relatório final
         total_time = time.time() - start_time
