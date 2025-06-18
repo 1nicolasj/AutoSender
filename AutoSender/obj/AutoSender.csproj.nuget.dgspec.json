@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj": {}
+    "C:\\Dev\\AutoSenderBackup\\AutoSender\\AutoSender\\AutoSender.csproj": {}
   },
   "projects": {
-    "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj": {
+    "C:\\Dev\\AutoSenderBackup\\AutoSender\\AutoSender\\AutoSender.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj",
+        "projectUniqueName": "C:\\Dev\\AutoSenderBackup\\AutoSender\\AutoSender\\AutoSender.csproj",
         "projectName": "AutoSender",
-        "projectPath": "C:\\Dev\\AutoSender\\AutoSender\\AutoSender.csproj",
+        "projectPath": "C:\\Dev\\AutoSenderBackup\\AutoSender\\AutoSender\\AutoSender.csproj",
         "packagesPath": "C:\\Users\\nicolassantos\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\AutoSender\\AutoSender\\obj\\",
+        "outputPath": "C:\\Dev\\AutoSenderBackup\\AutoSender\\AutoSender\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -54,6 +54,10 @@
               "target": "Package",
               "version": "[8.0.0, )"
             },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
@@ -63,10 +67,6 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[8.0.7, )"
-            },
-            "Npgsql.EntityFrameworkCore.PostgreSQL": {
-              "target": "Package",
-              "version": "[8.0.0, )"
             }
           },
           "imports": [

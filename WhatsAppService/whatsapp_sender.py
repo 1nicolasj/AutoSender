@@ -1,103 +1,103 @@
-import os
 import time
-import psycopg2
-from dotenv import load_dotenv
+import sqlite3
+import os
+import random
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import TimeoutException, WebDriverException, NoSuchElementException
-import urllib.parse
-
-# Carrega variáveis de ambiente
-try:
-    load_dotenv(encoding='utf-8')
-except:
-    load_dotenv()
 
 class WhatsAppSender:
     def __init__(self):
-        self.db_connection = None
         self.driver = None
-        self.is_logged_in = False
+        self.db_connection = None
         self.setup_database()
         self.setup_driver()
 
     def setup_database(self):
-        """Configura conexão com o banco de dados PostgreSQL"""
+        """Conecta ao SQLite (mesmo banco que a aplicação web)"""
         try:
-            connection_params = {
-                'host': os.getenv('DB_HOST', 'localhost'),
-                'database': os.getenv('DB_NAME', 'AutoSenderDb'),
-                'user': os.getenv('DB_USER', 'postgres'),
-                'password': os.getenv('DB_PASSWORD', 'root'),
-                'port': int(os.getenv('DB_PORT', '5432')),
-                'client_encoding': 'utf8'
-            }
-            
-            self.db_connection = psycopg2.connect(**connection_params)
-            print("[OK] Conexao com banco estabelecida!")
+            # Caminho para o banco SQLite
+            db_path = os.path.join(os.path.dirname(__file__), "..", "AutoSender", "autosender.db")
+            self.db_connection = sqlite3.connect(db_path)
+            print(f"[OK] Conectado ao SQLite: {db_path}")
         except Exception as e:
             print(f"[ERRO] Problema no banco: {e}")
             raise
 
     def setup_driver(self):
-        """Configura Chrome - versão que estava funcionando"""
+        """Configura Chrome com correções para WhatsApp Web"""
         try:
             chrome_options = Options()
-            chrome_options.add_argument("--start-maximized")
-            chrome_options.add_argument("--disable-notifications")
-            chrome_options.add_argument("--disable-web-security")
-            chrome_options.add_argument("--disable-features=VizDisplayCompositor")
+            
+            # User-Agent real para evitar detecção
+            chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+            
+            # Desabilitar detecção de automação
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            chrome_options.add_experimental_option('useAutomationExtension', False)
+            chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+            
+            # Configurações de segurança
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
-            chrome_options.add_argument("--disable-gpu")
-            chrome_options.add_argument("--disable-extensions")
-            chrome_options.add_argument("--disable-plugins")
-            chrome_options.add_argument("--disable-default-apps")
+            chrome_options.add_argument("--disable-web-security")
             
-            # Manter sessão ativa
-            chrome_options.add_argument("--keep-alive-for-test")
-            chrome_options.add_argument("--disable-background-timer-throttling")
-            chrome_options.add_argument("--disable-renderer-backgrounding")
-            chrome_options.add_argument("--disable-backgrounding-occluded-windows")
-            
-            # Configurar user data para manter sessão
-            user_data_dir = os.path.join(os.getcwd(), "chrome_user_data")
+            # Salvar sessão do WhatsApp
+            user_data_dir = os.path.join(os.getcwd(), "whatsapp_session")
             chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
             
-            try:
-                from webdriver_manager.chrome import ChromeDriverManager
-                driver_path = ChromeDriverManager().install()
-                print(f"ChromeDriver baixado em: {driver_path}")
-                service = Service(driver_path)
-                self.driver = webdriver.Chrome(service=service, options=chrome_options)
-                print("[OK] ChromeDriver configurado!")
-            except Exception as e:
-                print(f"Erro com webdriver-manager: {e}")
-                print("[AVISO] Tentando ChromeDriver do sistema...")
-                self.driver = webdriver.Chrome(options=chrome_options)
-                print("[OK] ChromeDriver do sistema configurado!")
+            self.driver = webdriver.Chrome(options=chrome_options)
             
-            # Configurações de timeout
-            self.driver.implicitly_wait(10)
-            self.driver.set_page_load_timeout(30)
+            # Remover propriedades de automação
+            self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
             
+            print("[OK] Chrome configurado")
         except Exception as e:
-            print(f"[ERRO] Problema no driver: {e}")
+            print(f"[ERRO] Problema ao configurar Chrome: {e}")
             raise
 
+    def connect_whatsapp(self):
+        """Conecta ao WhatsApp Web"""
+        try:
+            print("[INFO] Acessando WhatsApp Web...")
+            self.driver.get("https://web.whatsapp.com")
+            
+            # Aguardar QR code ou carregamento
+            time.sleep(10)
+            
+            # Verificar se já está logado
+            try:
+                # Se encontrar a caixa de pesquisa, já está logado
+                WebDriverWait(self.driver, 5).until(
+                    EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true'][@data-tab='3']"))
+                )
+                print("[OK] WhatsApp já conectado!")
+                return True
+            except:
+                print("[INFO] QR code disponível. Escaneie com seu celular.")
+                print("[INFO] Aguardando login...")
+                
+                # Aguardar login (até 60 segundos)
+                WebDriverWait(self.driver, 60).until(
+                    EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true'][@data-tab='3']"))
+                )
+                print("[OK] Login realizado com sucesso!")
+                return True
+                
+        except Exception as e:
+            print(f"[ERRO] Problema ao conectar WhatsApp: {e}")
+            return False
+
     def get_contacts(self):
-        """Obtém contatos do banco de dados"""
+        """Busca contatos no banco SQLite"""
         try:
             cursor = self.db_connection.cursor()
             cursor.execute("""
-                SELECT "Nome", "Telefone", "MensagemPersonalizada" 
-                FROM "Contatos" 
-                ORDER BY "DataCadastro" DESC
+                SELECT Nome, Telefone, MensagemPersonalizada 
+                FROM Contatos 
+                ORDER BY DataCadastro DESC
             """)
             contacts = cursor.fetchall()
             cursor.close()
@@ -107,223 +107,67 @@ class WhatsAppSender:
             print(f"[ERRO] Problema ao carregar contatos: {e}")
             return []
 
-    def login_whatsapp(self):
-        """Login único no WhatsApp"""
-        if self.is_logged_in:
-            return True
-            
+    def send_message(self, phone_number, message):
+        """Envia mensagem para um contato"""
         try:
-            print("Abrindo WhatsApp Web...")
-            self.driver.get("https://web.whatsapp.com")
+            from selenium.webdriver.common.keys import Keys
             
-            wait = WebDriverWait(self.driver, 60)
+            # Formatar número (remover caracteres especiais)
+            clean_phone = ''.join(filter(str.isdigit, phone_number))
             
-            # Verificar se já está logado (sessão salva)
-            try:
-                print("Verificando se ja esta logado...")
-                wait.until(EC.any_of(
-                    EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true"]')),
-                    EC.presence_of_element_located((By.XPATH, '//div[@data-testid="chat-list"]')),
-                    EC.presence_of_element_located((By.XPATH, '//span[@data-testid="default-user"]'))
-                ))
-                print("[OK] Ja logado! Pulando QR Code...")
-                self.is_logged_in = True
-                return True
-                
-            except TimeoutException:
-                # Precisa fazer login
-                print("QR Code detectado - faca o login manual")
-                print("Escaneie o QR Code no WhatsApp do seu celular")
-                
-                # Aguardar login manual
-                input("Pressione ENTER apos escanear o QR Code...")
-                
-                # Verificar se login foi bem-sucedido
-                try:
-                    wait.until(EC.any_of(
-                        EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true"]')),
-                        EC.presence_of_element_located((By.XPATH, '//div[@data-testid="chat-list"]'))
-                    ))
-                    print("[OK] Login realizado com sucesso!")
-                    self.is_logged_in = True
-                    return True
-                except TimeoutException:
-                    print("[ERRO] Falha no login - tente novamente")
-                    return False
-                    
-        except Exception as e:
-            print(f"[ERRO] Problema no login: {e}")
-            return False
-
-    def format_phone(self, phone):
-        """Formata número de telefone corretamente"""
-        # Remove tudo que não é número
-        phone = ''.join(filter(str.isdigit, phone))
-        
-        # Adiciona código do país (55 - Brasil) se não tiver
-        if not phone.startswith('55'):
-            phone = '55' + phone
-            
-        return phone
-
-    def send_message(self, phone, message):
-        """Versão OTIMIZADA com Enter direto"""
-        try:
-            phone = self.format_phone(phone)
-            print(f"Enviando para: {phone}")
-            
-            message_encoded = urllib.parse.quote(message)
-            url = f"https://web.whatsapp.com/send?phone={phone}&text={message_encoded}"
+            # URL direta para o contato
+            url = f"https://web.whatsapp.com/send?phone={clean_phone}&text={message}"
             self.driver.get(url)
             
-            wait = WebDriverWait(self.driver, 15)  # Reduzido de 20 para 15
+            # Aguardar carregar
+            time.sleep(3)
             
-            # Aguardar página carregar (OTIMIZADO)
-            time.sleep(2)  # Reduzido de 4 para 2 segundos
+            # Encontrar campo de mensagem e enviar com Enter
+            message_box = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true'][@data-tab='10']"))
+            )
+            message_box.send_keys(Keys.ENTER)
             
-            # ESTRATÉGIA ÚNICA: Enter direto (mais rápido e confiável)
-            try:
-                message_box = wait.until(EC.element_to_be_clickable((
-                    By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]'
-                )))
-                message_box.click()
-                time.sleep(0.5)  # Reduzido de 1 para 0.5 segundos
-                message_box.send_keys(Keys.ENTER)
-                print("[OK] Enviado via Enter")
-                time.sleep(2)  # Reduzido de 3 para 2 segundos
-                return True
-                
-            except TimeoutException:
-                print("[AVISO] Campo de mensagem nao encontrado - tentando botao")
-                
-                # FALLBACK: Só se Enter falhar
-                try:
-                    send_button = wait.until(EC.element_to_be_clickable((
-                        By.XPATH, '//span[@data-icon="send" or @data-testid="send"]'
-                    )))
-                    send_button.click()
-                    print("[OK] Enviado via botao (fallback)")
-                    time.sleep(2)
-                    return True
-                    
-                except TimeoutException:
-                    print("[ERRO] Numero invalido ou WhatsApp nao carregou")
-                    return False
-                    
-        except WebDriverException as e:
-            if "invalid session id" in str(e).lower():
-                print("[AVISO] Sessao perdida - reconectando...")
-                self.is_logged_in = False
-                if self.login_whatsapp():
-                    return self.send_message(phone, message)
-            print(f"[ERRO] Problema WebDriver: {e}")
-            return False
+            print(f"[OK] Mensagem enviada para {phone_number}")
+            time.sleep(random.randint(5,8))  # Delay entre mensagens (entre 5 e 8 segundos)
+            return True
             
         except Exception as e:
-            print(f"[ERRO] Problema geral: {e}")
+            print(f"[ERRO] Falha ao enviar para {phone_number}: {e}")
             return False
 
-    def process_all_contacts(self):
-        """Processa todos os contatos"""
-        print("Iniciando processamento...")
-        
-        # Carregar contatos
-        contacts = self.get_contacts()
-        if not contacts:
-            print("Nenhum contato encontrado!")
-            return
-            
-        print(f"Total: {len(contacts)} contatos")
-        
-        # Login único
-        if not self.login_whatsapp():
-            print("[ERRO] Falha no login - abortando")
-            return
-            
-        # Processamento
-        success_count = 0
-        fail_count = 0
-        start_time = time.time()
-        
-        for i, (nome, telefone, mensagem) in enumerate(contacts, 1):
-            print(f"\n[{i}/{len(contacts)}] {nome} ({telefone})")
-            
-            # Mensagem padrão se não tiver personalizada
-            if not mensagem or mensagem.strip() == "":
-                mensagem = f"Ola {nome}! Esta e uma mensagem automatica do sistema AutoSender."
-            
-            # Tentar enviar
-            if self.send_message(telefone, mensagem):
-                success_count += 1
-                print(f"[SUCESSO] Enviado para {nome}")
-            else:
-                fail_count += 1
-                print(f"[FALHA] Erro para {nome}")
-            
-            # Progresso
-            progress = (i / len(contacts)) * 100
-            print(f"Progresso: {progress:.1f}% | Sucesso: {success_count} | Falhas: {fail_count}")
-            
-            # Intervalo entre mensagens
-            if i < len(contacts):
-                # Intervalo inteligente baseado no sucesso
-                if success_count == i:  # 100% de sucesso
-                    interval = 4  # Mais rápido
-                elif success_count > fail_count:  # Mais sucessos que falhas
-                    interval = 5  # Normal
-                else:  # Muitas falhas
-                    interval = 7  # Mais devagar para dar tempo
-            
-                print(f"Aguardando {interval}s...")
-                time.sleep(interval)
-
-        # Relatório final
-        total_time = time.time() - start_time
-        print(f"\n{'='*60}")
-        print(f"RELATORIO FINAL")
-        print(f"{'='*60}")
-        print(f"Total de contatos: {len(contacts)}")
-        print(f"Enviadas com sucesso: {success_count}")
-        print(f"Falhas: {fail_count}")
-        print(f"Taxa de sucesso: {(success_count/len(contacts)*100):.1f}%")
-        print(f"Tempo total: {total_time/60:.1f} minutos")
-        print(f"{'='*60}")
-
-    def close(self):
-        """Cleanup"""
+    def run(self):
+        """Executa o envio de mensagens"""
         try:
-            if self.db_connection:
-                self.db_connection.close()
-                print("[OK] Conexao BD fechada")
-        except:
-            pass
+            # Conectar ao WhatsApp
+            if not self.connect_whatsapp():
+                return
             
-        try:
+            # Buscar contatos
+            contacts = self.get_contacts()
+            if not contacts:
+                print("[INFO] Nenhum contato encontrado")
+                return
+            
+            # Enviar mensagens
+            for contact in contacts:
+                nome, telefone, mensagem = contact
+                print(f"[INFO] Enviando para {nome} ({telefone})")
+                
+                if mensagem:
+                    self.send_message(telefone, mensagem)
+                else:
+                    print(f"[AVISO] {nome} não tem mensagem personalizada")
+            
+            print("[OK] Envio concluído!")
+            
+        except Exception as e:
+            print(f"[ERRO] Problema durante execução: {e}")
+        finally:
+            input("Pressione Enter para fechar...")
             if self.driver:
                 self.driver.quit()
-                print("[OK] Driver fechado")
-        except:
-            pass
-
-def main():
-    sender = None
-    try:
-        print("AutoSender - WhatsApp Automation")
-        print("=" * 50)
-        
-        sender = WhatsAppSender()
-        sender.process_all_contacts()
-        
-    except KeyboardInterrupt:
-        print("\nInterrompido pelo usuario")
-    except Exception as e:
-        print(f"Erro critico: {e}")
-        import traceback
-        traceback.print_exc()
-    finally:
-        if sender:
-            sender.close()
-        print("Processo finalizado!")
 
 if __name__ == "__main__":
-    main()
+    sender = WhatsAppSender()
+    sender.run()

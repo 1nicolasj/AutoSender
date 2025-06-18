@@ -23,5 +23,13 @@ namespace AutoSender.Data
                     .HasColumnType("timestamp with time zone");
             });
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlite("Data Source=autosender.db");
+            }
+        }
     }
-} 
+}

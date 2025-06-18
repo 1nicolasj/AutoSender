@@ -10,3 +10,5 @@ __pycache__/
 *.pyc
 
 WhatsAppService/chrome_user_data/
+AutoSender/chrome_user_data/
+/whatsapp_session

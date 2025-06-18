@@ -1,0 +1,6 @@
+2025/06/18-18:49:36.898 3724 Reusing MANIFEST C:\Dev\AutoSenderBackup\AutoSender\AutoSender\whatsapp_session\Default\Local Storage\leveldb/MANIFEST-000001
+2025/06/18-18:49:36.909 3724 Recovering log #3
+2025/06/18-18:49:36.913 3724 Reusing old log C:\Dev\AutoSenderBackup\AutoSender\AutoSender\whatsapp_session\Default\Local Storage\leveldb/000003.log 
+2025/06/18-18:51:38.126 2508 Level-0 table #5: started
+2025/06/18-18:51:38.135 2508 Level-0 table #5: 19402 bytes OK
+2025/06/18-18:51:38.138 2508 Delete type=0 #3
