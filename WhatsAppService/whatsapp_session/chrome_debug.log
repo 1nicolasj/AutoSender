@@ -1,6 +1,0 @@
-[9168:17648:0618/195951.360:INFO:components\enterprise\browser\controller\chrome_browser_cloud_management_controller.cc:202] No machine level policy manager exists.
-[4712:260:0618/195951.610:WARNING:ui\gl\direct_composition_support.cc:1167] QueryInterface to IDCompositionDevice4 failed: No such interface supported (0x80004002)
-[9168:17648:0618/195952.320:INFO:CONSOLE:163] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/yZ/r/Xuq5-4ZgEbj.js (163)
-[9168:17648:0618/200004.199:INFO:CONSOLE:163] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/yZ/r/Xuq5-4ZgEbj.js (163)
-[9168:17648:0618/200004.319:INFO:CONSOLE:0] "Blocked attempt to show a 'beforeunload' confirmation panel for a frame that never had a user gesture since its load. https://www.chromestatus.com/feature/5082396709879808", source: https://web.whatsapp.com/ (0)
-[14004:5792:0618/200116.973:WARNING:net\spdy\spdy_session.cc:2784] Received RST for invalid stream75

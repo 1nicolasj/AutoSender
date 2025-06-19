@@ -23,4 +23,5 @@ chrome_user_data/
 *.dat
 WhatsAppService/chrome_user_data/
 AutoSender/chrome_user_data/
-/whatsapp_session
+AutoSender/whatsapp_session
+WhatsAppService/whatsapp_session
