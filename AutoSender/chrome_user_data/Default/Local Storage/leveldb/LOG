@@ -1,6 +1,0 @@
-2025/06/17-19:29:16.618 4518 Reusing MANIFEST C:\Dev\AutoSender\AutoSender\chrome_user_data\Default\Local Storage\leveldb/MANIFEST-000001
-2025/06/17-19:29:16.629 4518 Recovering log #4
-2025/06/17-19:29:16.633 4518 Reusing old log C:\Dev\AutoSender\AutoSender\chrome_user_data\Default\Local Storage\leveldb/000004.log 
-2025/06/17-19:30:16.641 3adc Level-0 table #7: started
-2025/06/17-19:30:16.649 3adc Level-0 table #7: 12849 bytes OK
-2025/06/17-19:30:16.651 3adc Delete type=0 #4
