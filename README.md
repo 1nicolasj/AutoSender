@@ -1,98 +1,103 @@
 # AutoSender
 
-Sistema de automação para envio de mensagens em massa via WhatsApp Web usando **ASP.NET Core** e **Python**.
+Sistema para envio automático de mensagens no WhatsApp Web. Feito com ASP.NET Core para gerenciar contatos e Python para automação.
 
----
+## O que você precisa ter instalado
 
-## Tecnologias
-
-- **ASP.NET Core 8.0 MVC**
-- **PostgreSQL**
-- **Python + Selenium**
-- **Entity Framework Core**
-
----
-
-## Pré-requisitos
-
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [PostgreSQL](https://www.postgresql.org/download/)
+- [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [Python 3.8+](https://www.python.org/downloads/)
-- [Google Chrome](https://www.google.com/chrome/)
+- [Google Chrome](https://www.google.com/chrome/) atualizado
 
----
+## Como rodar
 
-## Instalação
+### 1. Baixe o projeto
+```bash
+git clone https://github.com/1nicolasj/AutoSender.git
+cd AutoSender
+```
 
-1. **Clone o repositório**
-    ```bash
-    git clone https://github.com/1nicolasj/AutoSender.git
-    cd AutoSender
-    ```
+### 2. Configure a aplicação web
+```bash
+cd AutoSender
+dotnet ef database update
+dotnet run
+```
 
-2. **Configure o banco PostgreSQL no `appsettings.json`**
+Agora você pode acessar http://localhost:5126 para cadastrar seus contatos.
 
-3. **Execute as migrations**
-    ```bash
-    dotnet ef database update
-    ```
+### 3. Configure o Python
+```bash
+cd WhatsAppService
+python -m venv .venv
 
-4. **Configure o ambiente Python**
-    ```bash
-    cd WhatsAppService
-    python -m venv venv
-    venv\Scripts\activate   # (Windows)
-    # Ou no Linux/Mac:
-    # source venv/bin/activate
-    pip install psycopg2-binary python-dotenv selenium webdriver-manager
-    ```
+# No Windows:
+.\.venv\Scripts\Activate.ps1
 
-5. **Crie o arquivo `.env` em `WhatsAppService/`**
-    ```
-    DB_HOST=localhost
-    DB_NAME=AutoSenderDb
-    DB_USER=postgres
-    DB_PASSWORD=sua_senha
-    DB_PORT=5432
-    ```
+pip install -r requirements.txt
+```
 
-6. **Execute o projeto**
-    ```bash
-    dotnet run
-    ```
+## Como usar
 
----
+1. **Cadastre contatos**: Abra http://localhost:5126 e adicione um nome, telefone e mensagem de cada pessoa
+2. **Execute a automação**: No botao de automacao, o app vai rodar o script `python whatsapp_sender.py`
+3. **Primeira vez**: Vai abrir o Chrome e pedir para escanear o QR Code do WhatsApp
+4. **Próximas vezes**: Vai conectar automaticamente e enviar as mensagens
 
-## Como Usar
+## O que faz
 
-1. Acesse [https://localhost:5126](https://localhost:5126)
-2. Adicione contatos
-3. Configure suas mensagens
-4. Execute a automação
-5. Escaneie o QR Code do WhatsApp
-6. Acompanhe o progresso do envio
+- Interface web simples para gerenciar contatos
+- Salva tudo num banco SQLite
+- Abre o WhatsApp Web automaticamente
+- Envia mensagens com intervalos para nao ser bloqueado
+- Lembra da sua sessao (nao precisa escanear QR toda vez)
+- Mostra relatorio do que foi enviado
 
----
-
-## Estrutura do Projeto
+## Estrutura das pastas
 
 ```
 AutoSender/
-├── Controllers/         # Controllers
-├── Models/              # Models (entidades)
-├── Views/               # Paginas Web
-├── WhatsAppService/     # Automacao Python 
-│   └── whatsapp_sender.py
-└── wwwroot/             
+├── AutoSender/                 # Site para cadastrar contatos
+├── WhatsAppService/           # Script que envia as mensagens
+│   ├── whatsapp_sender.py     # Arquivo principal
+│   └── requirements.txt       # Dependências do Python
 ```
-
----
 
 ## Funcionalidades
 
-- Interface web para gestão de contatos
-- Envio automático via WhatsApp Web
-- Mensagens personalizadas por contato
-- Sistema de retry automático
+### Interface Web
+- CRUD completo de contatos
+- Interface com Bootstrap simples
+- Banco SQLite integrado
 
----
+### Automação Python
+- Sessao persistente do WhatsApp (nao precisa escanear QR sempre)
+- Intervalos entre mensagens
+- Retry automatico em falhas
+- Formataçao automatica de numeros brasileiros
+- Relatorios de envio
+- Detecçao de WhatsApp nao conectado
+
+## Dependências Python
+
+```txt
+selenium==4.15.2
+webdriver-manager==4.0.1
+```
+
+O `webdriver-manager` baixa automaticamente o ChromeDriver compatível.
+
+## Solução de Problemas
+
+### Erro de ativação do venv:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+.\.venv\Scripts\Activate.ps1
+```
+
+### WhatsApp não conecta:
+- Feche o Chrome completamente
+- Delete as pastas `chrome_user_data` e `whatsapp_session` se existirem
+- Rode novamente
+
+### Não encontra os contatos:
+Certifique-se de que você rodou a aplicação web primeiro (`dotnet run`) para criar o banco de dados.

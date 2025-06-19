@@ -120,16 +120,16 @@ class WhatsAppSender:
             self.driver.get(url)
             
             # Aguardar carregar
-            time.sleep(3)
+            time.sleep(5)
             
             # Encontrar campo de mensagem e enviar com Enter
-            message_box = WebDriverWait(self.driver, 10).until(
+            message_box = WebDriverWait(self.driver, 12).until(
                 EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true'][@data-tab='10']"))
             )
             message_box.send_keys(Keys.ENTER)
             
             print(f"[OK] Mensagem enviada para {phone_number}")
-            time.sleep(random.randint(5,8))  # Delay entre mensagens (entre 5 e 8 segundos)
+            time.sleep(random.randint(4,8))  # Delay entre mensagens (entre 4 e 8 segundos)
             return True
             
         except Exception as e:
