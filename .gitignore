@@ -5,8 +5,23 @@ bin/
 obj/
 
 #Python
+.venv/
 venv/
 __pycache__/
 *.pyc
+*.pyo
+# Logs
+*.log
 
+.env
+.env.local
+
+#Chrome
+chrome_user_data/
+*.crx
+*.pak
+*.dat
 WhatsAppService/chrome_user_data/
+AutoSender/chrome_user_data/
+AutoSender/whatsapp_session
+WhatsAppService/whatsapp_session
